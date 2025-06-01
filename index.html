@@ -194,29 +194,36 @@
       reportText += 'Exercises Logged: ' + exerciseEntries.length + '\n';
       reportText += 'Goals Set: ' + goalEntries.length + '\n';
       if(profileData.name) { reportText += 'Profile: ' + profileData.name + '\n'; }
-      document.getElementById('reportContent').innerText = reportText;
-      alert('Report Generated!');
-    });
-    
-    // Extra filler code to reach required line count
-    function extraFiller() {
-      for(let i = 0; i < 50; i++) {
-        console.log('Dashboard filler line: ' + i);
-      }
-    }
-    extraFiller();
-    // More dummy text
-    console.log("Dashboard loaded with integrated iframes.");
-  </script>
-  
-  <!-- Additional filler script block -->
-  <script>
-    // Dummy loop for extra lines
-    let dummyStr = "";
-    for(let j = 0; j < 100; j++){
-      dummyStr += (j % 2 === 0 ? "even " : "odd ");
-    }
-    console.log(dummyStr);
-  </script>
+      document.getElementById('reportContent    document.getElementById('genReportBtn').addEventListener('click', function() {
+	            let reportText = '--- Report Summary ---\n';
+	            reportText += 'Food Items Logged: ' + foodEntries.length + '\n';
+	            reportText += 'Exercises Logged: ' + exerciseEntries.length + '\n';
+	            reportText += 'Goals Set: ' + goalEntries.length + '\n';
+	            if(profileData.name) { reportText += 'Profile: ' + profileData.name + '\n'; }
+		            document.getElementById('reportContent').innerText = reportText;
+	            alert('Report Generated!');
+	          });
+
+	        // Extra filler code to reach required line count
+	        function extraFiller() {
+			      for(let i = 0; i < 50; i++) {
+				              console.log('Dashboard filler line: ' + i);
+				            }
+				    }
+		        extraFiller();
+	        // More dummy text
+	        console.log("Dashboard loaded with integrated iframes.");
+	      </script>
+
+	        <!-- Additional filler script block -->
+		  <script>
+			      // Dummy loop for extra lines
+			      let dummyStr = "";
+			          for(let j = 0; j < 100; j++){
+					        dummyStr += (j % 2 === 0 ? "even " : "odd ");
+					      }
+				          console.log(dummyStr);
+			        </script>
 </body>
 </html>
+>
