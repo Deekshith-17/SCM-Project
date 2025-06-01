@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exercise Tracker</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #2196F3, #1976D2);
+      color: #fff;
+    }
+    header {
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .content { padding: 15px; }
+    .form-group { margin: 10px 0; }
+    .form-group input {
+      width: 95%; padding: 8px; border: none;
+      border-radius: 4px;
+    }
+    .form-group button {
+      padding: 10px 15px;
+      background: #0D47A1;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+    }
+    .form-group button:hover { background: #1565C0; }
+    ul {
+      list-style: none; padding: 0; margin-top: 15px;
+    }
+    ul li {
+      background: rgba(255,255,255,0.2); margin: 5px;
+      padding: 8px; border-radius: 4px;
+      display: flex; justify-content: space-between;
+    }
+    ul li button {
+      padding: 5px 8px; background: #d32f2f;
+      border: none; border-radius: 4px;
+      color: #fff; cursor: pointer;
+    }
+    ul li button:hover { background: #b71c1c; }
+    .timer-section {
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+    }
+    .timer-display { font-size: 22px; margin-top: 10px; }
+    .filler { font-size: 12px; color: #bbdefb; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <header>Exercise Tracker</header>
+  <div class="content">
+    <div class="form-group">
+      <input type="text" id="exerciseName" placeholder="Exercise Name" />
+    </div>
+    <div class="form-group">
+      <input type="number" id="exerciseDuration" placeholder="Duration (min)" />
+    </div>
+    <div class="form-group">
+      <button onclick="logExercise()">Log Exercise</button>
+    </div>
+    <ul id="exerciseList"></ul>
+    
+    <div class="timer-section">
+      <h3>Workout Timer</h3>
+      <button onclick="startTimer()">Start Timer</button>
+      <button onclick="stopTimer()">Stop Timer</button>
+      <div class="timer-display" id="timerDisplay">00:00</div>
+    </div>
+    
+    <p class="filler">Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem.</p>
+    <div class="filler">
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Proin eget tortor risus. Nulla porttitor accumsan tincidunt.</p>
+    </div>
+  </div>
+  
+  <script>
+    let exerciseEntries = [];
+    function logExercise() {
+      const name = document.getElementById('exerciseName').value;
+      const duration = document.getElementById('exerciseDuration').value;
+      if(name && duration) {
+        const entry = { name, duration };
+        exerciseEntries.push(entry);
+        addExerciseToList(entry, exerciseEntries.length - 1);
+        document.getElementById('exerciseName').value = "";
+        document.getElementById('exerciseDuration').value = "";
+      } else {
+        alert("Please enter both exercise name and duration.");
+      }
+    }
+    function addExerciseToList(entry, index) {
+      const li = document.createElement('li');
+      li.innerHTML = "<span>" + entry.name + " - " + entry.duration + " min</span> <button onclick='deleteExercise(" + index + ")'>Delete</button>";
+      document.getElementById('exerciseList').appendChild(li);
+    }
+    function deleteExercise(index) {
+      exerciseEntries.splice(index, 1);
+      refreshExerciseList();
+    }
+    function refreshExerciseList() {
+      const list = document.getElementById('exerciseList');
+      list.innerHTML = "";
+      exerciseEntries.forEach((entry, i) => {
+        addExerciseToList(entry, i);
+      });
+    }
+    
+    // Timer functionality
+    let timerInterval, totalSeconds = 0;
+    function updateTimer() {
+      totalSeconds++;
+      let mins = Math.floor(totalSeconds / 60);
+      let secs = totalSeconds % 60;
+      document.getElementById('timerDisplay').innerText = 
+          (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
+    }
+    function startTimer() {
+      if(!timerInterval) {
+        timerInterval = setInterval(updateTimer, 1000);
+      }
+    }
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    
+    // Filler simulating extra code
+    function exerciseFiller() {
+      for(let i = 0; i < 50; i++){
+        console.log("Exercise filler: " + i);
+      }
+    }
+    exerciseFiller();
+    
+    document.addEventListener("DOMContentLoaded", function(){
+      console.log("Exercise Tracker loaded.");
+    });
+  </script>
+  
+  <!-- Extra filler script -->
+  <script>
+    let extraLines = "";
+    for(let j = 0; j < 100; j++){
+      extraLines += (j % 2 === 0 ? "even " : "odd ");
+    }
+    console.log(extraLines);
+  </script>
+</body>
+</html>
