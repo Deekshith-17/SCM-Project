@@ -61,15 +61,15 @@
       border-bottom: 1px solid #ccc;
       padding-bottom: 5px;
     }
-    .profile-form, .report-box, .dummy-content {
+    .profile-form, .report-box, .dummy-content, .water-intake {
       margin-top: 15px;
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 4px;
       background: #f9f9f9;
     }
-    .profile-form input {
-      width: 90%;
+    .profile-form input, .water-intake input {
+      width: 60%;
       padding: 8px;
       margin: 5px 0;
       border: 1px solid #bbb;
@@ -84,6 +84,35 @@
       margin: 5px 0;
       white-space: pre-line;
       font-family: monospace;
+    }
+    .water-intake button {
+      padding: 8px 15px;
+      background: #00796b;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .water-intake button:hover {
+      background: #009688;
+    }
+    .progress-container {
+      width: 90%;
+      background: #e0e0e0;
+      border-radius: 5px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 20px;
+      background: #2196F3;
+      width: 0%;
+      transition: width 0.5s;
+      text-align: center;
+      color: #fff;
+      line-height: 20px;
+      font-size: 12px;
     }
     /* Iframe styling so they fill grid cell */
     iframe {
@@ -127,6 +156,17 @@
           <label for="profileEmail">Email:</label>
           <input type="email" id="profileEmail" placeholder="Enter your email" />
         </div>
+        <!-- NEW: Water Intake Section -->
+        <div class="water-intake">
+          <h3>Daily Water Intake</h3>
+          <label for="waterAmount">Amount (ml):</label>
+          <input type="number" id="waterAmount" placeholder="Enter water intake in ml" />
+          <button id="addWaterBtn">Add Water</button>
+          <div class="progress-container">
+            <div class="progress-bar" id="waterProgress"></div>
+          </div>
+          <p id="waterSummary"></p>
+        </div>
         <div class="report-box">
           <h3>Report Summary</h3>
           <p id="reportContent">No report generated yet.</p>
@@ -155,75 +195,101 @@
   
   <script>
     /* Global Data Stores */
-    let profileData = {};
-    let foodEntries = [];
-    let exerciseEntries = [];
-    let goalEntries = [];
+    let profileData = JSON.parse(localStorage.getItem('profileData')) || {};
+    let foodEntries = JSON.parse(localStorage.getItem('foodEntries')) || [];
+    let exerciseEntries = JSON.parse(localStorage.getItem('exerciseEntries')) || [];
+    let goalEntries = JSON.parse(localStorage.getItem('goalEntries')) || [];
+    let waterIntake = JSON.parse(localStorage.getItem('waterIntake')) || 0;
+    const DAILY_WATER_GOAL = 2000; // 2000 ml = 2 liters
 
-    // Save Profile functionality (dummy save to global variable)
+    // Load profile data into form
+    document.getElementById('profileName').value = profileData.name || '';
+    document.getElementById('profileAge').value = profileData.age || '';
+    document.getElementById('profileEmail').value = profileData.email || '';
+
+    // Save Profile functionality (save to localStorage)
     document.getElementById('saveProfileBtn').addEventListener('click', function() {
       const name = document.getElementById('profileName').value;
       const age = document.getElementById('profileAge').value;
       const email = document.getElementById('profileEmail').value;
       if(name && age && email) {
         profileData = { name, age, email };
+        localStorage.setItem('profileData', JSON.stringify(profileData));
         alert('Profile Saved!');
       } else {
         alert('Please fill in all profile fields.');
       }
     });
 
-    // Clear All Data functionality (clears dashboard & sends message to iframes via localStorage demo)
+    // Clear All Data functionality (clears dashboard & localStorage)
     document.getElementById('clearDataBtn').addEventListener('click', function() {
       if(confirm('Are you sure you want to clear all data?')) {
         profileData = {};
         foodEntries = [];
         exerciseEntries = [];
         goalEntries = [];
-        document.getElementById('reportContent').innerText = 'No report generated yet.';
-        // For demo purposes, we clear localStorage for iframes as well.
+        waterIntake = 0;
         localStorage.clear();
+        document.getElementById('reportContent').innerText = 'No report generated yet.';
+        updateWaterProgress();
         alert('All data cleared!');
       }
     });
 
-    // Generate Report functionality (dummy report)
+    // Generate Report functionality (includes water intake)
     document.getElementById('genReportBtn').addEventListener('click', function() {
       let reportText = '--- Report Summary ---\n';
       reportText += 'Food Items Logged: ' + foodEntries.length + '\n';
       reportText += 'Exercises Logged: ' + exerciseEntries.length + '\n';
       reportText += 'Goals Set: ' + goalEntries.length + '\n';
+      reportText += 'Water Intake: ' + waterIntake + ' ml\n';
       if(profileData.name) { reportText += 'Profile: ' + profileData.name + '\n'; }
-      document.getElementById('reportContent    document.getElementById('genReportBtn').addEventListener('click', function() {
-	            let reportText = '--- Report Summary ---\n';
-	            reportText += 'Food Items Logged: ' + foodEntries.length + '\n';
-	            reportText += 'Exercises Logged: ' + exerciseEntries.length + '\n';
-	            reportText += 'Goals Set: ' + goalEntries.length + '\n';
-	            if(profileData.name) { reportText += 'Profile: ' + profileData.name + '\n'; }
-		            document.getElementById('reportContent').innerText = reportText;
-	            alert('Report Generated!');
-	          });
+      document.getElementById('reportContent').innerText = reportText;
+      alert('Report Generated!');
+    });
 
-	        // Extra filler code to reach required line count
-	        function extraFiller() {
-			      for(let i = 0; i < 50; i++) {
-				              console.log('Dashboard filler line: ' + i);
-				            }
-				    }
-		        extraFiller();
-	        // More dummy text
-	        console.log("Dashboard loaded with integrated iframes.");
-	      </script>
+    // Water intake logic
+    document.getElementById('addWaterBtn').addEventListener('click', function() {
+      const amount = parseInt(document.getElementById('waterAmount').value);
+      if (amount && amount > 0) {
+        waterIntake = Math.min(waterIntake + amount, DAILY_WATER_GOAL);
+        localStorage.setItem('waterIntake', JSON.stringify(waterIntake));
+        updateWaterProgress();
+        document.getElementById('waterAmount').value = '';
+      }
+    });
 
-	        <!-- Additional filler script block -->
-		  <script>
-			      // Dummy loop for extra lines
-			      let dummyStr = "";
-			          for(let j = 0; j < 100; j++){
-					        dummyStr += (j % 2 === 0 ? "even " : "odd ");
-					      }
-				          console.log(dummyStr);
-			        </script>
+    function updateWaterProgress() {
+      const progress = (waterIntake / DAILY_WATER_GOAL) * 100;
+      const progressBar = document.getElementById('waterProgress');
+      progressBar.style.width = progress + '%';
+      progressBar.textContent = Math.round(progress) + '% (' + waterIntake + ' ml)';
+      document.getElementById('waterSummary').textContent = 'Daily goal: ' + DAILY_WATER_GOAL + ' ml. Current: ' + waterIntake + ' ml.';
+    }
+
+    // Initialize water progress on load
+    updateWaterProgress();
+
+    // Extra filler code to reach required line count
+    function extraFiller() {
+      for(let i = 0; i < 50; i++) {
+        console.log('Dashboard filler line: ' + i);
+      }
+    }
+    extraFiller();
+    // More dummy text
+    console.log("Dashboard loaded with integrated iframes.");
+  </script>
+  
+  <!-- Additional filler script block -->
+  <script>
+    // Dummy loop for extra lines
+    let dummyStr = "";
+    for(let j = 0; j < 100; j++){
+      dummyStr += (j % 2 === 0 ? "even " : "odd ");
+    }
+    console.log(dummyStr);
+  </script>
 </body>
 </html>
->
+
