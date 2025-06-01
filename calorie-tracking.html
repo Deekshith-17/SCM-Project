@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calorie Tracker</title>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #FF9800, #F57C00);
+      color: #fff;
+    }
+    header {
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .content {
+      padding: 15px;
+    }
+    .form-group {
+      margin: 10px 0;
+    }
+    .form-group input { 
+      width: 95%; padding: 8px; border: none;
+      border-radius: 4px;
+    }
+    .form-group button {
+      padding: 10px 15px;
+      background: #BF360C;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+    }
+    .form-group button:hover {
+      background: #E64A19;
+    }
+    ul {
+      list-style: none; padding: 0;
+      margin-top: 15px;
+    }
+    ul li {
+      background: rgba(0,0,0,0.2); 
+      margin: 5px;
+      padding: 8px;
+      border-radius: 4px;
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    ul li button {
+      padding: 5px 8px;
+      background: #d32f2f;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+    }
+    ul li button:hover {
+      background: #b71c1c;
+    }
+    .timer-section {
+      margin-top: 20px;
+      padding: 10px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      text-align: center;
+    }
+    .timer-display {
+      font-size: 22px;
+      margin-top: 10px;
+    }
+    /* Filler styles */
+    .filler { font-size: 12px; color: #ffe0b2; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <header>Calorie Tracker</header>
+  <div class="content">
+    <div class="form-group">
+      <input type="text" id="foodItem" placeholder="Food Item" />
+    </div>
+    <div class="form-group">
+      <input type="number" id="foodCalories" placeholder="Calories" />
+    </div>
+    <div class="form-group">
+      <button onclick="logFood()">Log Food</button>
+    </div>
+    <ul id="foodList"></ul>
+    
+    <div class="timer-section">
+      <h3>Meal Timer</h3>
+      <input type="time" id="mealTime" />
+      <button onclick="setMealTimer()">Set Timer</button>
+      <div class="timer-display" id="mealTimerDisplay">00:00</div>
+    </div>
+    
+    <p class="filler">Proin eget tortor risus. Nulla quis lorem ut libero malesuada feugiat.</p>
+    
+    <!-- Extra filler content -->
+    <div class="filler">
+      <p>Vestibulum suscipit nulla quis orci. Donec sollicitudin molestie malesuada.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    </div>
+  </div>
+  
+  <script>
+    let foodEntries = [];
+    function logFood() {
+      const food = document.getElementById('foodItem').value;
+      const cal = document.getElementById('foodCalories').value;
+      if(food && cal) {
+        const entry = { food, cal };
+        foodEntries.push(entry);
+        addFoodToList(entry, foodEntries.length - 1);
+        document.getElementById('foodItem').value = "";
+        document.getElementById('foodCalories').value = "";
+      } else {
+        alert("Please enter both food and calories.");
+      }
+    }
+    function addFoodToList(entry, index) {
+      const li = document.createElement('li');
+      li.innerHTML = "<span>" + entry.food + " - " + entry.cal + " cal</span> <button onclick='deleteFood(" + index + ")'>Delete</button>";
+      document.getElementById("foodList").appendChild(li);
+    }
+    function deleteFood(index) {
+      foodEntries.splice(index, 1);
+      refreshFoodList();
+    }
+    function refreshFoodList() {
+      const list = document.getElementById("foodList");
+      list.innerHTML = "";
+      foodEntries.forEach((entry, i) => {
+        addFoodToList(entry, i);
+      });
+    }
+    // Meal timer functionality
+    let mealTimer;
+    let mealTimeCounter = 0;
+    function updateMealTimer() {
+      mealTimeCounter++;
+      let minutes = Math.floor(mealTimeCounter / 60);
+      let seconds = mealTimeCounter % 60;
+      document.getElementById("mealTimerDisplay").innerText =
+          (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    }
+    function setMealTimer() {
+      if(!mealTimer) {
+        mealTimer = setInterval(updateMealTimer, 1000);
+        alert("Meal timer started.");
+      } else {
+        alert("Meal timer is already running.");
+      }
+    }
+    // Extra filler loop
+    function calorieFiller() {
+      for(let i = 0; i < 50; i++){
+        console.log("Calorie filler: " + i);
+      }
+    }
+    calorieFiller();
+    
+    document.addEventListener("DOMContentLoaded", function(){
+      console.log("Calorie Tracker loaded in iframe.");
+    });
+  </script>
+  
+  <!-- Additional filler script -->
+  <script>
+    let extraDummy = "";
+    for(let j = 0; j < 100; j++){
+      extraDummy += (j % 2 === 0 ? "even " : "odd ");
+    }
+    console.log(extraDummy);
+  </script>
+</body>
+</html>
