@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Goal Setting</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #004d40, #00796b);
+      color: #fff;
+    }
+    header {
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .content { padding: 15px; }
+    .form-group { margin: 10px 0; }
+    .form-group input {
+      width: 95%; padding: 8px; border: none;
+      border-radius: 4px;
+    }
+    .form-group button {
+      padding: 10px 15px;
+      background: #00695c;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+    }
+    .form-group button:hover { background: #00897b; }
+    ul {
+      list-style: none; padding: 0; margin-top: 15px;
+    }
+    ul li {
+      background: rgba(0,0,0,0.2); margin: 5px;
+      padding: 8px; border-radius: 4px;
+      display: flex; justify-content: space-between;
+    }
+    ul li button {
+      padding: 5px 8px; background: #d32f2f;
+      border: none; border-radius: 4px;
+      color: #fff; cursor: pointer;
+    }
+    ul li button:hover { background: #b71c1c; }
+    .filler { font-size: 12px; color: #b2dfdb; margin-top: 10px; }
+    .calendar {
+      margin-top: 15px;
+      padding: 10px;
+      background: #fff;
+      color: #000;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .calendar input {
+      width: 80%;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <header>Goal Setting</header>
+  <div class="content">
+    <div class="form-group">
+      <input type="text" id="goalText" placeholder="Enter your goal" />
+    </div>
+    <div class="form-group">
+      <input type="number" id="goalTarget" placeholder="Target Value" />
+    </div>
+    <div class="form-group">
+      <button onclick="setGoal()">Set Goal</button>
+    </div>
+    <ul id="goalList"></ul>
+    
+    <div class="calendar">
+      <h3>Set Deadline</h3>
+      <input type="date" id="goalDeadline" />
+      <button onclick="assignDeadline()">Assign Deadline</button>
+    </div>
+    
+    <p class="filler">Donec sollicitudin molestie malesuada. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.</p>
+    <div class="filler">
+      <p>Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus.</p>
+      <p>Pellentesque in ipsum id orci porta dapibus.</p>
+    </div>
+  </div>
+  
+  <script>
+    let goalEntries = [];
+    function setGoal() {
+      const goal = document.getElementById('goalText').value;
+      const target = document.getElementById('goalTarget').value;
+      if(goal && target) {
+        const entry = { goal, target };
+        goalEntries.push(entry);
+        addGoalToList(entry, goalEntries.length - 1);
+        document.getElementById('goalText').value = "";
+        document.getElementById('goalTarget').value = "";
+      } else {
+        alert("Please enter both goal and target.");
+      }
+    }
+    function addGoalToList(entry, index) {
+      const li = document.createElement('li');
+      li.innerHTML = "<span>" + entry.goal + " (Target: " + entry.target + ")</span> <button onclick='deleteGoal(" + index + ")'>Delete</button>";
+      document.getElementById('goalList').appendChild(li);
+    }
+    function deleteGoal(index) {
+      goalEntries.splice(index, 1);
+      refreshGoalList();
+    }
+    function refreshGoalList() {
+      const list = document.getElementById('goalList');
+      list.innerHTML = "";
+      goalEntries.forEach((entry, i) => {
+        addGoalToList(entry, i);
+      });
+    }
+    function assignDeadline() {
+      const deadline = document.getElementById('goalDeadline').value;
+      if(deadline) {
+        alert("Deadline assigned: " + deadline);
+      } else {
+        alert("Please select a deadline date.");
+      }
+    }
+    // Extra filler loop for goal page
+    function goalFiller() {
+      for(let i = 0; i < 50; i++) {
+        console.log("Goal filler line: " + i);
+      }
+    }
+    goalFiller();
+    
+    document.addEventListener("DOMContentLoaded", function(){
+      console.log("Goal Setting page loaded in iframe.");
+    });
+  </script>
+  
+  <!-- Additional filler script -->
+  <script>
+    let extraGoal = "";
+    for(let j = 0; j < 100; j++){
+      extraGoal += (j % 2 === 0 ? "even " : "odd ");
+    }
+    console.log(extraGoal);
+  </script>
+</body>
+</html>
