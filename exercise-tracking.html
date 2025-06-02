@@ -1,162 +1,225 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Exercise Tracker</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #2196F3, #1976D2);
-      color: #fff;
-    }
-    header {
-      background: rgba(0,0,0,0.3);
-      padding: 15px;
-      text-align: center;
-      font-size: 24px;
-    }
-    .content { padding: 15px; }
-    .form-group { margin: 10px 0; }
-    .form-group input {
-      width: 95%; padding: 8px; border: none;
-      border-radius: 4px;
-    }
-    .form-group button {
-      padding: 10px 15px;
-      background: #0D47A1;
-      border: none;
-      border-radius: 4px;
-      color: #fff;
-      cursor: pointer;
-    }
-    .form-group button:hover { background: #1565C0; }
-    ul {
-      list-style: none; padding: 0; margin-top: 15px;
-    }
-    ul li {
-      background: rgba(255,255,255,0.2); margin: 5px;
-      padding: 8px; border-radius: 4px;
-      display: flex; justify-content: space-between;
-    }
-    ul li button {
-      padding: 5px 8px; background: #d32f2f;
-      border: none; border-radius: 4px;
-      color: #fff; cursor: pointer;
-    }
-    ul li button:hover { background: #b71c1c; }
-    .timer-section {
-      text-align: center;
-      margin-top: 20px;
-      padding: 10px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 4px;
-    }
-    .timer-display { font-size: 22px; margin-top: 10px; }
-    .filler { font-size: 12px; color: #bbdefb; margin-top: 10px; }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercise Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a clean, modern look */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Ensure all interactive elements and containers have rounded corners */
+        .rounded-element {
+            border-radius: 0.5rem; /* Equivalent to Tailwind's rounded-lg */
+        }
+        /* Custom focus styles for inputs */
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Tailwind blue-500 with opacity */
+            border-color: #2563EB; /* Tailwind blue-600 */
+        }
+        /* Styles for the custom message box */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ef4444; /* Tailwind red-500 */
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .message-box.show {
+            opacity: 1;
+        }
+    </style>
 </head>
-<body>
-  <header>Exercise Tracker</header>
-  <div class="content">
-    <div class="form-group">
-      <input type="text" id="exerciseName" placeholder="Exercise Name" />
+<body class="bg-gradient-to-br from-blue-500 to-blue-700 min-h-screen flex flex-col items-center justify-center p-4">
+    <header class="w-full max-w-2xl bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-xl shadow-lg p-6 text-center text-white text-3xl font-extrabold mb-8">
+        Exercise Tracker
+    </header>
+
+    <div class="w-full max-w-2xl bg-white bg-opacity-30 backdrop-filter backdrop-blur-lg rounded-xl shadow-lg p-6 md:p-8 lg:p-10 text-white">
+        <div class="mb-6 space-y-4">
+            <div class="form-group">
+                <input type="text" id="exerciseName" placeholder="Exercise Name"
+                       class="w-full px-4 py-3 bg-white bg-opacity-80 border border-transparent rounded-lg text-gray-800 placeholder-gray-500 focus:border-blue-600 focus:ring-blue-500 transition duration-200 rounded-element" />
+            </div>
+            <div class="form-group">
+                <input type="number" id="exerciseDuration" placeholder="Duration (min)"
+                       class="w-full px-4 py-3 bg-white bg-opacity-80 border border-transparent rounded-lg text-gray-800 placeholder-gray-500 focus:border-blue-600 focus:ring-blue-500 transition duration-200 rounded-element" />
+            </div>
+            <div class="form-group">
+                <button onclick="logExercise()"
+                        class="w-full py-3 px-6 bg-blue-800 hover:bg-blue-900 text-white font-bold rounded-lg shadow-md transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 rounded-element">
+                    Log Exercise
+                </button>
+            </div>
+        </div>
+
+        <ul id="exerciseList" class="space-y-3 mb-8">
+            </ul>
+
+        <div class="timer-section text-center bg-white bg-opacity-20 rounded-lg p-6 shadow-inner">
+            <h3 class="text-2xl font-semibold mb-4">Workout Timer</h3>
+            <div class="flex justify-center gap-4 mb-4">
+                <button onclick="startTimer()"
+                        class="py-2 px-6 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 rounded-element">
+                    Start Timer
+                </button>
+                <button onclick="stopTimer()"
+                        class="py-2 px-6 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 rounded-element">
+                    Stop Timer
+                </button>
+            </div>
+            <div class="timer-display text-5xl font-extrabold text-white" id="timerDisplay">00:00</div>
+        </div>
     </div>
-    <div class="form-group">
-      <input type="number" id="exerciseDuration" placeholder="Duration (min)" />
-    </div>
-    <div class="form-group">
-      <button onclick="logExercise()">Log Exercise</button>
-    </div>
-    <ul id="exerciseList"></ul>
-    
-    <div class="timer-section">
-      <h3>Workout Timer</h3>
-      <button onclick="startTimer()">Start Timer</button>
-      <button onclick="stopTimer()">Stop Timer</button>
-      <div class="timer-display" id="timerDisplay">00:00</div>
-    </div>
-    
-    <p class="filler">Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem.</p>
-    <div class="filler">
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-      <p>Proin eget tortor risus. Nulla porttitor accumsan tincidunt.</p>
-    </div>
-  </div>
-  
-  <script>
-    let exerciseEntries = [];
-    function logExercise() {
-      const name = document.getElementById('exerciseName').value;
-      const duration = document.getElementById('exerciseDuration').value;
-      if(name && duration) {
-        const entry = { name, duration };
-        exerciseEntries.push(entry);
-        addExerciseToList(entry, exerciseEntries.length - 1);
-        document.getElementById('exerciseName').value = "";
-        document.getElementById('exerciseDuration').value = "";
-      } else {
-        alert("Please enter both exercise name and duration.");
-      }
-    }
-    function addExerciseToList(entry, index) {
-      const li = document.createElement('li');
-      li.innerHTML = "<span>" + entry.name + " - " + entry.duration + " min</span> <button onclick='deleteExercise(" + index + ")'>Delete</button>";
-      document.getElementById('exerciseList').appendChild(li);
-    }
-    function deleteExercise(index) {
-      exerciseEntries.splice(index, 1);
-      refreshExerciseList();
-    }
-    function refreshExerciseList() {
-      const list = document.getElementById('exerciseList');
-      list.innerHTML = "";
-      exerciseEntries.forEach((entry, i) => {
-        addExerciseToList(entry, i);
-      });
-    }
-    
-    // Timer functionality
-    let timerInterval, totalSeconds = 0;
-    function updateTimer() {
-      totalSeconds++;
-      let mins = Math.floor(totalSeconds / 60);
-      let secs = totalSeconds % 60;
-      document.getElementById('timerDisplay').innerText = 
-          (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
-    }
-    function startTimer() {
-      if(!timerInterval) {
-        timerInterval = setInterval(updateTimer, 1000);
-      }
-    }
-    function stopTimer() {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-    
-    // Filler simulating extra code
-    function exerciseFiller() {
-      for(let i = 0; i < 50; i++){
-        console.log("Exercise filler: " + i);
-      }
-    }
-    exerciseFiller();
-    
-    document.addEventListener("DOMContentLoaded", function(){
-      console.log("Exercise Tracker loaded.");
-    });
-  </script>
-  
-  <!-- Extra filler script -->
-  <script>
-    let extraLines = "";
-    for(let j = 0; j < 100; j++){
-      extraLines += (j % 2 === 0 ? "even " : "odd ");
-    }
-    console.log(extraLines);
-  </script>
+
+    <div id="messageBox" class="message-box"></div>
+
+    <script>
+        let exerciseEntries = [];
+        let timerInterval, totalSeconds = 0;
+        let messageBoxTimeout;
+
+        /**
+         * Displays a custom message box instead of alert().
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message (e.g., 'error', 'success').
+         */
+        function showMessage(message, type = 'error') {
+            const msgBox = document.getElementById('messageBox');
+            msgBox.innerText = message;
+            // Set background color based on type
+            if (type === 'error') {
+                msgBox.style.backgroundColor = '#ef4444'; // Tailwind red-500
+            } else if (type === 'success') {
+                msgBox.style.backgroundColor = '#22c55e'; // Tailwind green-500
+            } else {
+                msgBox.style.backgroundColor = '#3b82f6'; // Tailwind blue-500
+            }
+
+            msgBox.classList.add('show');
+
+            // Clear any existing timeout to prevent rapid message changes from hiding too soon
+            clearTimeout(messageBoxTimeout);
+            messageBoxTimeout = setTimeout(() => {
+                msgBox.classList.remove('show');
+            }, 3000); // Message disappears after 3 seconds
+        }
+
+        /**
+         * Logs a new exercise entry from input fields.
+         */
+        function logExercise() {
+            const nameInput = document.getElementById('exerciseName');
+            const durationInput = document.getElementById('exerciseDuration');
+            const name = nameInput.value.trim();
+            const duration = parseFloat(durationInput.value); // Parse as float for potential decimals
+
+            if (name && !isNaN(duration) && duration > 0) {
+                const entry = { name, duration };
+                exerciseEntries.push(entry);
+                addExerciseToList(entry, exerciseEntries.length - 1);
+                nameInput.value = "";
+                durationInput.value = "";
+                showMessage("Exercise logged successfully!", 'success');
+            } else {
+                showMessage("Please enter a valid exercise name and a positive duration.", 'error');
+            }
+        }
+
+        /**
+         * Adds an exercise entry to the displayed list.
+         * @param {object} entry - The exercise entry object.
+         * @param {number} index - The index of the entry in the exerciseEntries array.
+         */
+        function addExerciseToList(entry, index) {
+            const li = document.createElement('li');
+            li.className = "bg-white bg-opacity-20 p-4 rounded-lg flex justify-between items-center shadow-md";
+            li.innerHTML = `
+                <span class="text-lg font-medium">${entry.name} - ${entry.duration} min</span>
+                <button onclick='deleteExercise(${index})'
+                        class="py-2 px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition duration-200 rounded-element">
+                    Delete
+                </button>
+            `;
+            document.getElementById('exerciseList').appendChild(li);
+        }
+
+        /**
+         * Deletes an exercise entry from the list and refreshes the display.
+         * @param {number} index - The index of the exercise to delete.
+         */
+        function deleteExercise(index) {
+            if (index > -1 && index < exerciseEntries.length) {
+                exerciseEntries.splice(index, 1);
+                refreshExerciseList();
+                showMessage("Exercise deleted.", 'success');
+            }
+        }
+
+        /**
+         * Clears and re-renders the entire exercise list.
+         */
+        function refreshExerciseList() {
+            const list = document.getElementById('exerciseList');
+            list.innerHTML = ""; // Clear existing list
+            exerciseEntries.forEach((entry, i) => {
+                addExerciseToList(entry, i); // Re-add with updated indices
+            });
+        }
+
+        /**
+         * Updates the timer display every second.
+         */
+        function updateTimer() {
+            totalSeconds++;
+            let mins = Math.floor(totalSeconds / 60);
+            let secs = totalSeconds % 60;
+            document.getElementById('timerDisplay').innerText =
+                `${mins < 10 ? "0" + mins : mins}:${secs < 10 ? "0" + secs : secs}`;
+        }
+
+        /**
+         * Starts the workout timer.
+         */
+        function startTimer() {
+            if (!timerInterval) {
+                timerInterval = setInterval(updateTimer, 1000);
+                showMessage("Timer started!", 'success');
+            } else {
+                showMessage("Timer is already running.", 'info');
+            }
+        }
+
+        /**
+         * Stops the workout timer.
+         */
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                showMessage("Timer stopped.", 'success');
+            } else {
+                showMessage("Timer is not running.", 'info');
+            }
+        }
+
+        // Initialize on DOMContentLoaded
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("Exercise Tracker loaded.");
+            // No need for filler code or extra console logs in production
+        });
+    </script>
 </body>
 </html>
+
