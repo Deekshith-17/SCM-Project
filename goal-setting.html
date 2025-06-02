@@ -39,7 +39,13 @@
     ul li {
       background: rgba(0,0,0,0.2); margin: 5px;
       padding: 8px; border-radius: 4px;
+      display: flex; flex-direction: column;
+    }
+    ul li .top {
       display: flex; justify-content: space-between;
+    }
+    ul li .progress {
+      margin-top: 5px; font-size: 14px;
     }
     ul li button {
       padding: 5px 8px; background: #d32f2f;
@@ -93,28 +99,41 @@
   
   <script>
     let goalEntries = [];
+
     function setGoal() {
       const goal = document.getElementById('goalText').value;
-      const target = document.getElementById('goalTarget').value;
-      if(goal && target) {
-        const entry = { goal, target };
+      const target = parseFloat(document.getElementById('goalTarget').value);
+      if(goal && target > 0) {
+        const entry = { goal, target, progress: 0 };
         goalEntries.push(entry);
         addGoalToList(entry, goalEntries.length - 1);
         document.getElementById('goalText').value = "";
         document.getElementById('goalTarget').value = "";
       } else {
-        alert("Please enter both goal and target.");
+        alert("Please enter both goal and valid target.");
       }
     }
+
     function addGoalToList(entry, index) {
       const li = document.createElement('li');
-      li.innerHTML = "<span>" + entry.goal + " (Target: " + entry.target + ")</span> <button onclick='deleteGoal(" + index + ")'>Delete</button>";
+      li.innerHTML = `
+        <div class="top">
+          <span>${entry.goal} (Target: ${entry.target})</span>
+          <button onclick="deleteGoal(${index})">Delete</button>
+        </div>
+        <div class="progress">
+          <input type="number" placeholder="Update progress" oninput="updateProgress(${index}, this.value)" />
+          <span id="progressText-${index}">Progress: 0%</span>
+        </div>
+      `;
       document.getElementById('goalList').appendChild(li);
     }
+
     function deleteGoal(index) {
       goalEntries.splice(index, 1);
       refreshGoalList();
     }
+
     function refreshGoalList() {
       const list = document.getElementById('goalList');
       list.innerHTML = "";
@@ -122,6 +141,7 @@
         addGoalToList(entry, i);
       });
     }
+
     function assignDeadline() {
       const deadline = document.getElementById('goalDeadline').value;
       if(deadline) {
@@ -130,20 +150,30 @@
         alert("Please select a deadline date.");
       }
     }
-    // Extra filler loop for goal page
+
+    function updateProgress(index, value) {
+      const progress = parseFloat(value);
+      const target = goalEntries[index].target;
+      if (!isNaN(progress) && progress >= 0) {
+        goalEntries[index].progress = progress;
+        const percentage = Math.min((progress / target) * 100, 100).toFixed(1);
+        document.getElementById(`progressText-${index}`).textContent = `Progress: ${percentage}%`;
+      }
+    }
+
+    // Filler logs
     function goalFiller() {
       for(let i = 0; i < 50; i++) {
         console.log("Goal filler line: " + i);
       }
     }
     goalFiller();
-    
+
     document.addEventListener("DOMContentLoaded", function(){
       console.log("Goal Setting page loaded in iframe.");
     });
   </script>
-  
-  <!-- Additional filler script -->
+
   <script>
     let extraGoal = "";
     for(let j = 0; j < 100; j++){
@@ -153,3 +183,4 @@
   </script>
 </body>
 </html>
+
